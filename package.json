@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-zeldin",
   "version": "1.0.0",
-  "description": "n8n node for Zeldin",
+  "description": "Official n8n nodes for Zeldin. Interact with entities and handle real-time database triggers.",
   "main": "index.js",
   "scripts": {
     "build": "npx -y -p typescript tsc && npx -y copyfiles \"nodes/**/*.svg\" \"credentials/**/*.svg\" dist/",
@@ -9,7 +9,12 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "zeldin",
+    "real-estate",
+    "automation",
+    "supabase",
+    "crm"
   ],
   "author": "hariikr",
   "license": "ISC",
