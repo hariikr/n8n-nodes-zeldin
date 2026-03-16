@@ -1,5 +1,4 @@
 import {
-	IHookFunctions,
 	IWebhookFunctions,
 	IWebhookResponseData,
 	INodeType,
@@ -13,18 +12,12 @@ export class ZeldinTrigger implements INodeType {
 		icon: 'file:zeldin.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Handle Zeldin events via webhooks',
+		description: 'Handle Zeldin events from Supabase Webhooks',
 		defaults: {
 			name: 'Zeldin Trigger',
 		},
 		inputs: [],
 		outputs: ['main'],
-		credentials: [
-			{
-				name: 'zeldinApi',
-				required: true,
-			},
-		],
 		webhooks: [
 			{
 				name: 'default',
@@ -35,123 +28,49 @@ export class ZeldinTrigger implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Event',
+				displayName: 'Table Name',
+				name: 'table',
+				type: 'options',
+				options: [
+					{ name: 'Properties', value: 'properties' },
+					{ name: 'Contacts', value: 'contacts' },
+					{ name: 'Inquiries', value: 'inquiries' },
+					{ name: 'Deals', value: 'deals' },
+				],
+				default: 'properties',
+				description: 'The Supabase table that will trigger this node',
+			},
+			{
+				displayName: 'Event Type',
 				name: 'event',
 				type: 'options',
 				options: [
-					{
-						name: 'Entity Created',
-						value: 'entity.created',
-					},
-					{
-						name: 'Entity Deleted',
-						value: 'entity.deleted',
-					},
-					{
-						name: 'Entity Updated',
-						value: 'entity.updated',
-					},
+					{ name: 'All Events', value: 'all' },
+					{ name: 'Insert', value: 'INSERT' },
+					{ name: 'Update', value: 'UPDATE' },
+					{ name: 'Delete', value: 'DELETE' },
 				],
-				default: 'entity.created',
-				required: true,
-			},
-			{
-				displayName: 'Entity Type',
-				name: 'entity',
-				type: 'options',
-				options: [
-					{ name: 'Any', value: 'any' },
-					{ name: 'Contact', value: 'contact' },
-					{ name: 'Deal', value: 'deal' },
-					{ name: 'Inquiry', value: 'inquiry' },
-					{ name: 'Property', value: 'property' },
-				],
-				default: 'any',
-				description: 'Filter by entity type',
+				default: 'all',
+				description: 'The type of database event to trigger on',
 			},
 		],
 	};
 
-	webhookMethods = {
-		default: {
-			async checkExists(this: IHookFunctions): Promise<boolean> {
-				// We don't have a specific way to check if a webhook exists yet,
-				// so we return false to ensure 'create' is called during activation.
-				return false;
-			},
-			async create(this: IHookFunctions): Promise<boolean> {
-				const webhookUrl = this.getNodeWebhookUrl('default');
-				const event = this.getNodeParameter('event') as string;
-				const entity = this.getNodeParameter('entity') as string;
-				const credentials = await this.getCredentials('zeldinApi');
-				const baseUrl = (credentials?.baseUrl as string || 'https://api.zeldin.com').replace(/\/$/, '');
-
-				const body = {
-					event,
-					entity,
-					url: webhookUrl,
-				};
-
-				const options: any = {
-					method: 'POST',
-					uri: `${baseUrl}/webhooks`,
-					headers: {
-						Authorization: `Bearer ${credentials.apiKey}`,
-					},
-					body,
-					json: true,
-				};
-
-				const responseData = await this.helpers.request(options);
-				const webhookData = this.getWorkflowStaticData('node') as any;
-				webhookData.webhookId = responseData.id;
-
-				return true;
-			},
-			async delete(this: IHookFunctions): Promise<boolean> {
-				const webhookData = this.getWorkflowStaticData('node') as any;
-				const credentials = await this.getCredentials('zeldinApi');
-				const baseUrl = (credentials?.baseUrl as string || 'https://api.zeldin.com').replace(/\/$/, '');
-
-				if (webhookData.webhookId) {
-					const options: any = {
-						method: 'DELETE',
-						uri: `${baseUrl}/webhooks/${webhookData.webhookId}`,
-						headers: {
-							Authorization: `Bearer ${credentials.apiKey}`,
-						},
-						json: true,
-					};
-
-					try {
-						await this.helpers.request(options);
-						delete webhookData.webhookId;
-					} catch (error) {
-						return false;
-					}
-				}
-
-				return true;
-			},
-		},
-	};
-
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const body = this.getBodyData();
+		const table = this.getNodeParameter('table') as string;
 		const eventType = this.getNodeParameter('event') as string;
-		const entityType = this.getNodeParameter('entity') as string;
 
-		// Filter events based on node configuration
-		if (body.event !== eventType) {
-			return {
-				workflowData: [],
-			};
+		// Supabase Webhook payload structure: { table: "properties", type: "INSERT", ... }
+		
+		// 1. Check Table
+		if (body.table !== table) {
+			return { workflowData: [] };
 		}
 
-		if (entityType !== 'any' && body.entity !== entityType) {
-			return {
-				workflowData: [],
-			};
+		// 2. Check Event Type
+		if (eventType !== 'all' && body.type !== eventType) {
+			return { workflowData: [] };
 		}
 
 		return {

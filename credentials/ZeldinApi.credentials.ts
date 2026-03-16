@@ -6,17 +6,18 @@ export class ZeldinApi implements ICredentialType {
 
   properties: INodeProperties[] = [
     {
-      displayName: 'API Key',
+      displayName: 'Supabase Service Role Key',
       name: 'apiKey',
       type: 'string',
       default: '',
+      description: 'The "service_role" secret key from Supabase > Settings > API. This allows bypass of RLS.',
     },
     {
-      displayName: 'Base URL',
+      displayName: 'Supabase Project URL',
       name: 'baseUrl',
       type: 'string',
-      default: 'https://api.zeldin.com',
-      description: 'The base URL of the Zeldin API',
+      default: 'https://[project-ref].supabase.co',
+      description: 'The Project URL from Supabase > Settings > API (Example: https://xyz.supabase.co)',
     },
   ];
 }
