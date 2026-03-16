@@ -84,13 +84,39 @@ Let's say a user adds a new villa in your **Flutter App**.
 
 ---
 
-## 🛠️ 5. What your Senior needs to do
+## 👨‍💻 5. SQL Cookbook
 
-1.  **Create the Tables**: (Property, Contact, Inquiry, Deal).
-2.  **Provide the Service Role Key**: To be used in n8n credentials.
-3.  **Configure Webhooks**: Set up the webhooks in the Supabase Dashboard to point to your n8n workflows.
 
----
+
+### The Trigger Function
+This uses Supabase's internal `net` extension to send the data as an `AFTER INSERT` event without slowing down the database.
+
+```sql
+-- 1. Create the function that talks to n8n
+CREATE OR REPLACE FUNCTION notify_n8n_on_property()
+RETURNS TRIGGER AS $$
+BEGIN
+  PERFORM
+    net.http_post(
+      url:='https://your-n8n-url.com/webhook/zeldin',
+      headers:='{"Content-Type": "application/json", "Authorization": "Bearer your_secret"}'::jsonb,
+      body:=json_build_object(
+        'event', 'entity.created',
+        'entity', 'property',
+        'record', row_to_json(NEW)
+      )::jsonb
+    );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Create the AFTER INSERT trigger
+CREATE TRIGGER zeldin_property_inserted
+AFTER INSERT ON properties
+FOR EACH ROW
+EXECUTE FUNCTION notify_n8n_on_property();
+```
+
 
 ## 💡 Pro Tip: Custom API via Edge Functions
 If the logic is too complex for a direct database table, your senior can create **Supabase Edge Functions**. 
