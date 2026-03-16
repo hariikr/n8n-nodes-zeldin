@@ -84,6 +84,7 @@ export class ZeldinTrigger implements INodeType {
 				const event = this.getNodeParameter('event') as string;
 				const entity = this.getNodeParameter('entity') as string;
 				const credentials = await this.getCredentials('zeldinApi');
+				const baseUrl = (credentials?.baseUrl as string || 'https://api.zeldin.com').replace(/\/$/, '');
 
 				const body = {
 					event,
@@ -93,7 +94,7 @@ export class ZeldinTrigger implements INodeType {
 
 				const options: any = {
 					method: 'POST',
-					uri: `https://api.zeldin.com/webhooks`,
+					uri: `${baseUrl}/webhooks`,
 					headers: {
 						Authorization: `Bearer ${credentials.apiKey}`,
 					},
@@ -110,11 +111,12 @@ export class ZeldinTrigger implements INodeType {
 			async delete(this: IHookFunctions): Promise<boolean> {
 				const webhookData = this.getWorkflowStaticData('node') as any;
 				const credentials = await this.getCredentials('zeldinApi');
+				const baseUrl = (credentials?.baseUrl as string || 'https://api.zeldin.com').replace(/\/$/, '');
 
 				if (webhookData.webhookId) {
 					const options: any = {
 						method: 'DELETE',
-						uri: `https://api.zeldin.com/webhooks/${webhookData.webhookId}`,
+						uri: `${baseUrl}/webhooks/${webhookData.webhookId}`,
 						headers: {
 							Authorization: `Bearer ${credentials.apiKey}`,
 						},

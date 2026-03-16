@@ -11,5 +11,12 @@ export class ZeldinApi implements ICredentialType {
       type: 'string',
       default: '',
     },
+    {
+      displayName: 'Base URL',
+      name: 'baseUrl',
+      type: 'string',
+      default: 'https://api.zeldin.com',
+      description: 'The base URL of the Zeldin API',
+    },
   ];
 }
