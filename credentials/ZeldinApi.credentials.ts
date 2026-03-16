@@ -1,23 +1,24 @@
 import { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class ZeldinApi implements ICredentialType {
-  name = 'zeldinApi';
-  displayName = 'Zeldin API';
-
-  properties: INodeProperties[] = [
-    {
-      displayName: 'Supabase Service Role Key',
-      name: 'apiKey',
-      type: 'string',
-      default: '',
-      description: 'The "service_role" secret key from Supabase > Settings > API. This allows bypass of RLS.',
-    },
-    {
-      displayName: 'Supabase Project URL',
-      name: 'baseUrl',
-      type: 'string',
-      default: 'https://[project-ref].supabase.co',
-      description: 'The Project URL from Supabase > Settings > API (Example: https://xyz.supabase.co)',
-    },
-  ];
+	name = 'zeldinApi';
+	displayName = 'Zeldin API';
+	documentationUrl = 'https://docs.zeldin.com/api';
+	properties: INodeProperties[] = [
+		{
+			displayName: 'API Key',
+			name: 'apiKey',
+			type: 'string',
+			typeOptions: { password: true },
+			default: '',
+			description: 'Your Zeldin API Key',
+		},
+		{
+			displayName: 'API URL',
+			name: 'baseUrl',
+			type: 'string',
+			default: 'https://api.zeldin.com',
+			description: 'The URL of your Zeldin gateway',
+		},
+	];
 }

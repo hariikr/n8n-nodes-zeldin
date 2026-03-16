@@ -133,7 +133,6 @@ export class Zeldin implements INodeType {
 				const options: any = {
 					headers: {
 						Authorization: `Bearer ${apiKey}`,
-						apikey: apiKey,
 					},
 					json: true,
 				};
@@ -142,22 +141,22 @@ export class Zeldin implements INodeType {
 					if (operation === 'create') {
 						const data = this.getNodeParameter('data', i) as string;
 						options.method = 'POST';
-						options.uri = `${baseUrl}/rest/v1/${entity}s`;
+						options.uri = `${baseUrl}/v1/${entity}`;
 						options.body = typeof data === 'string' ? JSON.parse(data) : data;
 					} else if (operation === 'get') {
 						const entityId = this.getNodeParameter('entityId', i) as string;
 						options.method = 'GET';
-						options.uri = `${baseUrl}/rest/v1/${entity}s?id=eq.${entityId}`;
+						options.uri = `${baseUrl}/v1/${entity}/${entityId}`;
 					} else if (operation === 'update') {
 						const entityId = this.getNodeParameter('entityId', i) as string;
 						const data = this.getNodeParameter('data', i) as string;
 						options.method = 'PATCH';
-						options.uri = `${baseUrl}/rest/v1/${entity}s?id=eq.${entityId}`;
+						options.uri = `${baseUrl}/v1/${entity}/${entityId}`;
 						options.body = typeof data === 'string' ? JSON.parse(data) : data;
 					} else if (operation === 'delete') {
 						const entityId = this.getNodeParameter('entityId', i) as string;
 						options.method = 'DELETE';
-						options.uri = `${baseUrl}/rest/v1/${entity}s?id=eq.${entityId}`;
+						options.uri = `${baseUrl}/v1/${entity}/${entityId}`;
 					}
 				}
 
