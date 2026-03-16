@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"inlineSourceMap": true,
+		"lib": ["es2017"],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noEmitOnError": false,
+		"noImplicitAny": true,
+		"outDir": "dist",
+		"rootDir": ".",
+		"target": "es2017",
+		"typeRoots": ["./node_modules/@types"],
+		"skipLibCheck": true
+	},
+	"include": ["nodes/**/*.ts", "credentials/**/*.ts"]
+}

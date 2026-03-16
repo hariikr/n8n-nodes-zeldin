@@ -1,0 +1,32 @@
+{
+  "name": "n8n-nodes-zeldin",
+  "version": "1.0.0",
+  "description": "n8n node for Zeldin",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx -y -p typescript tsc && npx -y copyfiles \"nodes/**/*.svg\" \"credentials/**/*.svg\" dist/",
+    "dev": "npx -y -p typescript tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": "",
+  "license": "ISC",
+  "n8n": {
+    "nodes": [
+      "dist/nodes/Zeldin.node.js",
+      "dist/nodes/ZeldinTrigger.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/ZeldinApi.credentials.js"
+    ]
+  },
+  "dependencies": {
+    "n8n-workflow": "^2.12.0"
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.23.0",
+    "typescript": "^5.0.0"
+  }
+}
