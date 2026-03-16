@@ -11,8 +11,12 @@
   "keywords": [
     "n8n-community-node-package"
   ],
-  "author": "",
+  "author": "hariikr",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hariikr/n8n-nodes-zeldin.git"
+  },
   "n8n": {
     "nodes": [
       "dist/nodes/Zeldin.node.js",
